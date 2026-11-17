@@ -1,4 +1,4 @@
-# Paper-specific inference beyond the reviewed DataCamp exercises.
+# Family-clustered inference and the paper's free-care level for Table 2.
 table2_inference <- function(fit, family) {
   b <- coef(fit)
   X <- model.matrix(fit)

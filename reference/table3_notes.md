@@ -1,38 +1,49 @@
-# Table 3: scope and implementation
+# Table 3 notes
 
-Source: Aron-Dine, Einav, and Finkelstein (2013), Table 3, p. 209, and the original `tables.do`, step 8 (lines 828 onward). Published values were transcribed from the article and visually checked against the PDF.
+Source: the paper's Table 3 (p. 209) and the authors' `tables.do`, step 8 (from line 828). Published values were copied by hand from the paper and checked against the PDF.
 
-## Scope
+## What is covered
 
-Panel A compares 95% coinsurance with free care. This replication covers rows 1–3 and columns 1, 2, 4, 5, 6 and 7: any spending and dollar spending for total, inpatient and outpatient care. It does not reproduce log outcomes or the Lee bounds in row 4. All 18 coefficient estimates and 18 standard errors match after ordinary rounding to the published precision.
+Panel A: 95% coinsurance versus free care, rows 1 to 3. Columns 1, 2, 4, 5, 6 and 7, which are any spending and dollar spending for total, inpatient and outpatient care. Log outcomes and the bounds in row 4 are not covered.
 
-## Underreporting adjustment
+All 18 estimates and 18 standard errors match the paper after normal rounding.
 
-The authors' code uses multipliers 1.04 for free care; 1.06 for the 25%, mixed and 50% plans; 1.14 for the 95% plan; and 1.11 for the individual-deductible plan. The R code preserves the original sequential operations:
+## Correction for missing claims (row 2)
 
-1. Multiply outpatient spending by the plan multiplier.
-2. Add the already-adjusted outpatient spending times `(multiplier - 1)` to total spending.
-3. Multiply any-total-spending and any-outpatient-spending indicators by the same multiplier.
-4. Leave inpatient outcomes unchanged at this stage.
+The authors' code scales outcomes by a factor for each plan:
 
-Thus the total-spending update is `original_total + original_outpatient * multiplier * (multiplier - 1)`. It is not simply an addition of the original outpatient amount times the increment. This note documents fidelity to the supplied code; it does not assert that this particular sequencing is the only defensible correction.
+| Plan | Factor |
+| --- | ---: |
+| Free care | 1.04 |
+| 25%, mixed, 50% | 1.06 |
+| Individual deductible | 1.11 |
+| 95% | 1.14 |
 
-Multiplying indicators produces adjusted pseudo-outcomes, some above one. These are the authors' correction procedure, not observed binary outcomes or individually recovered claims. Their contrasts can be discussed as corrected share differences under the adjustment assumptions.
+The steps run in this order, as in the authors' code:
 
-## Additional baseline covariates
+1. Outpatient spending is multiplied by the factor.
+2. Total spending gets the extra amount: the new outpatient spending times (factor − 1).
+3. The any-total and any-outpatient indicators are multiplied by the factor.
+4. Inpatient outcomes are left unchanged.
 
-Row 3 adds the original list of pre-randomization variables: demographics, income, prior insurance, health, and prior utilization, including the supplied missingness indicators. Following the code, missing covariates are set to −1 and centered. The original list is retained in the R script. The fitted design has rank 87; redundant columns are handled by `lm()`.
+Because step 2 uses the already scaled outpatient amount, the new total is
 
-## Sample and inference
+$$\text{total} + \text{outpatient} \times f \times (f - 1)$$
 
-All six plans and all 20,203 person-years enter the regressions; free care is the reference. The 10,564 shown in the paper's Panel A heading is 6,840 free-care plus 3,724 95%-plan observations. It is not the regression sample restriction. Models retain site-by-enrollment-month and enrollment-year indicators, with CR1 standard errors clustered on 3,209 family identifiers.
+where $f$ is the factor. I kept this order to match the code. It is not the only reasonable way to do the correction.
 
-Validation independently reconstructs the cluster-score covariance for all 18 models, checks the baseline against Table 2, checks the sequential total-spending update against the original data, and verifies the panel count. No native Stata run was performed.
+After step 3, the "any spending" indicators can be above 1. They are no longer yes/no outcomes. Their differences should be read as corrected shares, under the authors' assumptions.
 
-## Interpretation
+## Pre-experiment controls (row 3)
 
-The total-spending contrast changes from about −845 to −786 to −728 dollars. The final magnitude is about 14% smaller than the baseline. The adjusted any-total-spending contrast changes more, from −0.170 to −0.100 to −0.095. Both patterns remain negative, but magnitudes depend on reporting and specification assumptions. This exercise does not bound all possible selection bias or establish effects on health and welfare.
+Row 3 adds the authors' list of variables measured before the experiment: demographics, income, prior insurance, health, and prior care use, with their missing-value flags. As in the authors' code, missing values are set to −1 and the variables are centered. The model has rank 87. `lm()` drops the redundant columns.
 
-Article: https://doi.org/10.1257/jep.27.1.197
+## Sample and standard errors
 
-Authors' data/code: https://doi.org/10.3886/E113919V1
+The regressions use all six plans and all 20,203 person-years. Free care is the base. The 10,564 in the panel heading is 6,840 free-care plus 3,724 95%-plan observations; it does not restrict the sample. All models keep the site × enrollment month and enrollment year controls. Standard errors are clustered on the 3,209 families.
+
+`validate_table3.R` checks the results a second way. It recomputes the clustered covariance by hand for all 18 models, checks row 1 against Table 2, checks the total-spending update against the data, and checks the panel count.
+
+## Takeaway
+
+Total spending: −845, then −786, then −728 dollars. The last is about 14% smaller than the first. Any total spending: −0.170, then −0.100, then −0.095. Both stay negative, but their size depends on the correction and the controls. These checks do not rule out all selection bias, and they say nothing about health outcomes.

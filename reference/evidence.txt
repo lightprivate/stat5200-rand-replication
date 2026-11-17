@@ -1,38 +1,32 @@
-Evidence for the two display differences (checked 2026-11-14)
+Why two Table 2 numbers need two-step rounding (checked 2026-11-14)
 
-1. Authors' replication archive: https://doi.org/10.3886/E113919V1
-Author-hosted download:
-https://economics.mit.edu/sites/default/files/2022-08/2701_RAND_data%281%29.zip
-Author page: https://economics.mit.edu/people/faculty/amy-finkelstein/publications
-Local unmodified tables.do, lines 304-366, implements Table 2.
-Line 363 invokes esttab with se and stats(), without b(), se(fmt), or stats(...,fmt()).
+Summary
+Two published numbers differ from direct rounding of my estimates:
+the inpatient SE for the 50% plan (265) and the inpatient joint p-value (0.1540).
+Both match if the numbers are first rounded the way Stata's esttab does by default,
+and then rounded again to the decimals shown in the paper. With this rule, all 78 numbers match.
+No regression result was changed to get this match.
 
-2. esttab official help, Numerical formats:
-https://repec.sowi.unibe.ch/stata/estout/help-esttab.html
-For non-integers greater than one, a3 retains at least one decimal and at least four significant digits.
-For numbers smaller than one, it retains three significant digits (subject to its scientific-notation rule).
+What is confirmed
+- The authors' Table 2 code (original/tables.do, lines 304-366) exports with esttab
+  and does not set a number format (line 363). So esttab's default format, a3, applies.
+- a3 keeps at least 4 significant digits for numbers above 1, and 3 for numbers below 1.
+  Docs: https://repec.sowi.unibe.ch/stata/estout/help-esttab.html
+  Source: https://github.com/benjann/estout/blob/master/esttab.ado (default a3 at line 549;
+  SEs inherit it at line 644) and estout.ado (lines 428 and 3890-3933).
+  Line numbers were checked on the date above and may change.
+- a3 was already the default in 2007, before the paper:
+  https://www.soz.unibe.ch/ueber_uns/personen/jann/publications_of_ben_jann/e131246/e131267/esttab_ger.pdf
 
-3. Current upstream source:
-https://github.com/benjann/estout/blob/master/esttab.ado
-Downloaded source: default bfmt a3 at line 549; SE inherits bfmt at line 644.
-https://github.com/benjann/estout/blob/master/estout.ado
-Downloaded source: statsfmt inherits first cell format at line 428; SignificantDigits at lines 3890-3933.
-These moving URLs were checked on the date above; line numbers may change later.
+What is guessed
+- The second rounding step (to the paper's decimals). I do not know who did it or how.
 
-4. Historical corroboration predating the 2013 article:
-Ben Jann, Making regression tables simplified (2007), Numerical formats.
-https://www.soz.unibe.ch/ueber_uns/personen/jann/publications_of_ben_jann/e131246/e131267/esttab_ger.pdf
-This documentation already describes a3 as the default for estimates and standard errors.
-The authors' exact installed version is not identified in their package.
+What I do not have
+- The authors' intermediate output, their esttab version, or a run of their Stata code.
 
-5. Cluster covariance and independent R implementation:
-https://www.stata.com/manuals/rregress.pdf
-https://sandwich.r-forge.r-project.org/reference/vcovCL.html
-Main R script uses lm and sandwich::vcovCL(type='HC1',cadjust=TRUE).
-The validation script uses ordinary factor coding and a direct CR1 covariance calculation.
-
-Result: the same a3 rule followed by decimal publication rounding matches all 78 cells.
-Confirmed: sample, numerical regression results, default export logic, numerical display reconstruction.
-Inferred: the precise final formatting operation used by the authors or journal.
-Not available: original intermediate Table2.csv, native Stata execution, author's software version or editing history.
-No changes to regression values are made to obtain a visual match.
+Data and clustered standard errors
+- Authors' archive: https://doi.org/10.3886/E113919V1
+  Direct download: https://economics.mit.edu/sites/default/files/2022-08/2701_RAND_data%281%29.zip
+- Stata clustered SEs: https://www.stata.com/manuals/rregress.pdf
+- R: sandwich::vcovCL(type = "HC1", cadjust = TRUE), https://sandwich.r-forge.r-project.org/reference/vcovCL.html
+  validate_results.R recomputes the same covariance by hand with different factor coding.

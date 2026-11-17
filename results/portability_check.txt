@@ -1,4 +1,0 @@
-PASS: Rscript replicate_table2.R from the project folder.
-PASS: source("replicate_table2.R") in a fresh R session from the project folder.
-PASS: displayed tables agree with the pre-refactor results.
-This course-style version requires the project folder as the working directory; arbitrary-working-directory execution is not supported.
