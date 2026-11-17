@@ -1,0 +1,22 @@
+Retrieved: 2026-11-14
+Article DOI: https://doi.org/10.1257/jep.27.1.197
+Official replication archive: https://doi.org/10.3886/E113919V1
+Author page: https://economics.mit.edu/people/faculty/amy-finkelstein/publications
+
+paper.pdf
+https://economics.mit.edu/sites/default/files/2022-08/Aron%20Dine%20Einav%20Finkelstein%20JEP%202013.pdf
+SHA256: 3f672395c5ab886bff46ed455eba3cf671857eb4a9c381346e0ef97c1ebb761b
+
+appendix.pdf
+https://economics.mit.edu/sites/default/files/inline-files/2701_RAND_app.online%20appendix.pdf
+SHA256: 145dfc8f1e5ae6e4c8d9d49e86a5f1b2f9a3c3106cfa79e38777e42b1e30cb38
+
+authors_replication.zip
+https://economics.mit.edu/sites/default/files/2022-08/2701_RAND_data%281%29.zip
+SHA256: bb58943494edb317f4326f4a5ea3ddd8038a71893e764cd31de225f9efbf414b
+
+authors_replication/ contains the unmodified extracted MIT ZIP.
+check_table2.R is an independent preliminary R diagnostic, not an author file.
+Run: Rscript check_table2.R (foreign package required; no other add-on packages).
+The ZIP includes analysis-ready datasets and tables.do, not a full raw-data cleaning pipeline.
+No native Stata execution has been performed.

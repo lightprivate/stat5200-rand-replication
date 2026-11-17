@@ -1,0 +1,38 @@
+Evidence for the two display differences (checked 2026-11-14)
+
+1. Authors' replication archive: https://doi.org/10.3886/E113919V1
+Author-hosted download:
+https://economics.mit.edu/sites/default/files/2022-08/2701_RAND_data%281%29.zip
+Author page: https://economics.mit.edu/people/faculty/amy-finkelstein/publications
+Local unmodified tables.do, lines 304-366, implements Table 2.
+Line 363 invokes esttab with se and stats(), without b(), se(fmt), or stats(...,fmt()).
+
+2. esttab official help, Numerical formats:
+https://repec.sowi.unibe.ch/stata/estout/help-esttab.html
+For non-integers greater than one, a3 retains at least one decimal and at least four significant digits.
+For numbers smaller than one, it retains three significant digits (subject to its scientific-notation rule).
+
+3. Current upstream source:
+https://github.com/benjann/estout/blob/master/esttab.ado
+Downloaded source: default bfmt a3 at line 549; SE inherits bfmt at line 644.
+https://github.com/benjann/estout/blob/master/estout.ado
+Downloaded source: statsfmt inherits first cell format at line 428; SignificantDigits at lines 3890-3933.
+These moving URLs were checked on the date above; line numbers may change later.
+
+4. Historical corroboration predating the 2013 article:
+Ben Jann, Making regression tables simplified (2007), Numerical formats.
+https://www.soz.unibe.ch/ueber_uns/personen/jann/publications_of_ben_jann/e131246/e131267/esttab_ger.pdf
+This documentation already describes a3 as the default for estimates and standard errors.
+The authors' exact installed version is not identified in their package.
+
+5. Cluster covariance and independent R implementation:
+https://www.stata.com/manuals/rregress.pdf
+https://sandwich.r-forge.r-project.org/reference/vcovCL.html
+Main R script uses lm and sandwich::vcovCL(type='HC1',cadjust=TRUE).
+The validation script uses ordinary factor coding and a direct CR1 covariance calculation.
+
+Result: the same a3 rule followed by decimal publication rounding matches all 78 cells.
+Confirmed: sample, numerical regression results, default export logic, numerical display reconstruction.
+Inferred: the precise final formatting operation used by the authors or journal.
+Not available: original intermediate Table2.csv, native Stata execution, author's software version or editing history.
+No changes to regression values are made to obtain a visual match.

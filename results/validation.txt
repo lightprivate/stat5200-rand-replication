@@ -1,0 +1,8 @@
+PASS: N=20,203; individuals=5,915; family clusters=3,209; rank=41.
+PASS: no duplicate person-year; six plan sample counts match.
+PASS: binary outcome indicators agree with source spending variables.
+PASS: all 78 published cells match after the documented display reconstruction.
+PASS: 76/78 cells match after direct rounding from full precision.
+Input MD5: a1a59087ab8980a4d202ed64df5f6e43
+No native Stata execution was performed.
+esttab a3 is verified from source/documentation; the final publication-rounding step is inferred.

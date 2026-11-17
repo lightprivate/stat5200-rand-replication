@@ -1,0 +1,6 @@
+source("replicate_table2.R")
+source("replicate_table3.R")
+source("summarize_data.R")
+source("plot_results.R")
+source("validate_results.R")
+source("validate_table3.R")
